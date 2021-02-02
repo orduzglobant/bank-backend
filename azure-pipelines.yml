@@ -100,3 +100,4 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
         artifactName: MyBuildOutputs
+
