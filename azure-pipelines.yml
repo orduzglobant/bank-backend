@@ -32,6 +32,7 @@ stages:
 
   - job: Clean_Sources
     displayName: Clean Sources
+    dependsOn: Install_Java11
     steps:
     - task: Maven@3
       inputs:
@@ -45,6 +46,7 @@ stages:
 
   - job: Compile
     displayName: Compile
+    dependsOn: Clean_Sources
     steps:
     - task: Maven@3
       inputs:
@@ -58,6 +60,7 @@ stages:
 
   - job: Test_Sources
     displayName: Test Sources
+    dependsOn: Compile
     steps:
     - task: Maven@3
       inputs:
@@ -74,9 +77,10 @@ stages:
         codeCoverageTool: 'JaCoCo'
         summaryFileLocation: '**/site/jacoco/jacoco.xml'
         reportDirectory:     '**/site/jacoco/'
-        
+
   - job: Package
     displayName: Package
+    dependsOn: Test_Sources
     steps:
     - task: Maven@3
       inputs:
