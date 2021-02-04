@@ -30,57 +30,57 @@ stages:
         jdkArchitectureOption: 'x64'
         jdkSourceOption: 'PreInstalled'
 
-  - job: Clean_Sources
-    displayName: Clean Sources
-    dependsOn: Install_Java11
-    steps:
-    - task: Maven@3
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '11'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: false
-        goals: 'clean'
-
-  - job: Compile
-    displayName: Compile
-    dependsOn: Clean_Sources
-    steps:
-    - task: Maven@3
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '11'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: false
-        goals: 'compile -DskipTests=true'
-
-  - job: Test_Sources
-    displayName: Test Sources
-    dependsOn: Compile
-    steps:
-    - task: Maven@3
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '11'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        goals: 'test'
-    - task: PublishCodeCoverageResults@1
-      inputs:
-        codeCoverageTool: 'JaCoCo'
-        summaryFileLocation: '**/site/jacoco/jacoco.xml'
-        reportDirectory:     '**/site/jacoco/'
+#  - job: Clean_Sources
+#    displayName: Clean Sources
+#    dependsOn: Install_Java11
+#    steps:
+#    - task: Maven@3
+#      inputs:
+#        mavenPomFile: 'pom.xml'
+#        mavenOptions: '-Xmx3072m'
+#        javaHomeOption: 'JDKVersion'
+#        jdkVersionOption: '11'
+#        jdkArchitectureOption: 'x64'
+#        publishJUnitResults: false
+#        goals: 'clean'
+#
+#  - job: Compile
+#    displayName: Compile
+#    dependsOn: Clean_Sources
+#    steps:
+#    - task: Maven@3
+#      inputs:
+#        mavenPomFile: 'pom.xml'
+#        mavenOptions: '-Xmx3072m'
+#        javaHomeOption: 'JDKVersion'
+#        jdkVersionOption: '11'
+#        jdkArchitectureOption: 'x64'
+#        publishJUnitResults: false
+#        goals: 'compile -DskipTests=true'
+#
+#  - job: Test_Sources
+#    displayName: Test Sources
+#    dependsOn: Compile
+#    steps:
+#    - task: Maven@3
+#      inputs:
+#        mavenPomFile: 'pom.xml'
+#        mavenOptions: '-Xmx3072m'
+#        javaHomeOption: 'JDKVersion'
+#        jdkVersionOption: '11'
+#        jdkArchitectureOption: 'x64'
+#        publishJUnitResults: true
+#        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+#        goals: 'test'
+#    - task: PublishCodeCoverageResults@1
+#      inputs:
+#        codeCoverageTool: 'JaCoCo'
+#        summaryFileLocation: '**/site/jacoco/jacoco.xml'
+#        reportDirectory:     '**/site/jacoco/'
 
   - job: Package
     displayName: Package
-    dependsOn: Test_Sources
+    dependsOn: Install_Java11
     steps:
     - task: Maven@3
       inputs:
@@ -128,6 +128,6 @@ stages:
             inputs:
               azureSubscription: 'coomeva-rg-connection'
               appName: '$(WebAppNameDev)'
-              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.jar'
+              package: '$(Pipeline.Workspace)/drop/target/*.jar'
 
 
