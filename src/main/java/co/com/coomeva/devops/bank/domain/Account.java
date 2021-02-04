@@ -51,8 +51,9 @@ public class Account implements java.io.Serializable {
 	@Size(max = 255)
 	@Column(name = "password", nullable = false)
 	private String password;
-	@NotNull
-	@Column(name = "version", nullable = false)
+	
+	
+	@Column(name = "version", nullable = true)
 	private Long version;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
