@@ -29,7 +29,6 @@ import com.vobi.devops.bank.utility.Utilities;
 
 @Scope("singleton")
 @Service
-
 public class AccountServiceImpl implements AccountService {
 
 	@Autowired

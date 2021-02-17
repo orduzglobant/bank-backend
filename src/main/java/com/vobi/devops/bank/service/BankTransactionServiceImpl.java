@@ -17,6 +17,8 @@ import com.vobi.devops.bank.dto.TransactionResultDTO;
 import com.vobi.devops.bank.dto.TransferDTO;
 import com.vobi.devops.bank.dto.WithdrawDTO;
 
+import com.vobi.devops.bank.exception.ZMessManager;
+
 @Service
 @Scope("singleton")
 public class BankTransactionServiceImpl implements BankTransactionService {
@@ -159,23 +161,23 @@ public class BankTransactionServiceImpl implements BankTransactionService {
 		}
 
 		if (accountService.findById(depositDTO.getAccoId()).isPresent() == false) {
-			throw new Exception("El Account con id:" + depositDTO.getAccoId() + " No existe");
+			throw new ZMessManager().new AccountNotFoundException(depositDTO.getAccoId());
 		}
 
 		Account account = accountService.findById(depositDTO.getAccoId()).get();
 
 		if (account.getEnable().trim().equals("N") == true) {
-			throw new Exception("El Account con id:" + depositDTO.getAccoId() + " Se encuentra inactiva");
+			throw new ZMessManager().new AccountNotEnableException(depositDTO.getAccoId());
 		}
 
 		if (userService.findById(depositDTO.getUserEmail()).isPresent() == false) {
-			throw new Exception("El user con id:" + depositDTO.getUserEmail() + " No existe");
+			throw new ZMessManager().new UserNotFoundException(depositDTO.getUserEmail());
 		}
 
 		Users user = userService.findById(depositDTO.getUserEmail()).get();
 
 		if (user.getEnable().trim().equals("N") == true) {
-			throw new Exception("El user con id:" + depositDTO.getUserEmail() + " Se encuentra inactiva");
+			throw new ZMessManager().new UserDisableException(depositDTO.getUserEmail());
 		}
 
 		TransactionType transactionType = transactionTypeService.findById(2).get();

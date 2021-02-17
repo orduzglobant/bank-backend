@@ -91,4 +91,41 @@ public class ZMessManager extends RuntimeException {
 			super("There was an exception trying to find " + info);
 		}
 	}
+	
+	public class AccountNotFoundException extends ZMessManager {
+		private static final long serialVersionUID = 1L;
+
+		public AccountNotFoundException(String accountId) {
+			super("The account with id " + accountId +" was not found");
+		}
+	}
+	
+	public class AccountNotEnableException extends ZMessManager {
+		private static final long serialVersionUID = 1L;
+
+		public AccountNotEnableException(String accountId) {
+			super("La cuenta con id " + accountId +" no esta activa");
+		}
+		
+	}
+	
+	public class UserNotFoundException extends ZMessManager {
+		private static final long serialVersionUID = 1L;
+
+		public UserNotFoundException(String userEmail) {
+			super("La user con Email " + userEmail +" no esta existe");
+		}
+		
+	}
+	
+	public class UserDisableException extends ZMessManager {
+		private static final long serialVersionUID = 1L;
+
+		public UserDisableException(String userEmail) {
+			super("El user con Email " + userEmail +" no esta activo");
+		}
+		
+	}
+	
+	
 }
