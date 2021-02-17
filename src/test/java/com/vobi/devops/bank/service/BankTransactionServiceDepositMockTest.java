@@ -2,12 +2,11 @@ package com.vobi.devops.bank.service;
 
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,16 +14,13 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vobi.devops.bank.builder.AccountBuilder;
 import com.vobi.devops.bank.builder.TransactionTypeBuilder;
-import com.vobi.devops.bank.builder.UserTypeBuilder;
 import com.vobi.devops.bank.builder.UsersBuilder;
 import com.vobi.devops.bank.domain.Account;
 import com.vobi.devops.bank.domain.Transaction;
 import com.vobi.devops.bank.domain.TransactionType;
-import com.vobi.devops.bank.domain.UserType;
 import com.vobi.devops.bank.domain.Users;
 import com.vobi.devops.bank.dto.DepositDTO;
 import com.vobi.devops.bank.dto.TransactionResultDTO;
@@ -32,11 +28,10 @@ import com.vobi.devops.bank.exception.ZMessManager.AccountNotEnableException;
 import com.vobi.devops.bank.exception.ZMessManager.AccountNotFoundException;
 import com.vobi.devops.bank.exception.ZMessManager.UserDisableException;
 import com.vobi.devops.bank.exception.ZMessManager.UserNotFoundException;
-import com.vobi.devops.bank.repository.AccountRepository;
 
 
 @ExtendWith(MockitoExtension.class)
-class BankTransactionServiceMockTest {
+class BankTransactionServiceDepositMockTest {
 	
 	@InjectMocks
 	private BankTransactionServiceImpl bankTransactionService;
@@ -52,6 +47,21 @@ class BankTransactionServiceMockTest {
 
 	@Mock
 	TransactionServiceImpl transactionService;
+	
+	@Test
+	void debeLanzarExecptioDepositDTONull() throws Exception{
+		//Arrange
+		DepositDTO depositDTO=null;
+		String messageExpected="El depositDTO es nulo";		
+
+        //Act
+		Exception exception =assertThrows(Exception.class,()->{
+			bankTransactionService.deposit(depositDTO);
+		});
+		
+        //Assert
+		assertEquals(messageExpected,exception.getMessage());		
+	}
 	
 	@Test
 	void debeRetornarExecptioAccountIdNull() throws Exception{
@@ -211,7 +221,7 @@ class BankTransactionServiceMockTest {
 		TransactionResultDTO transactionResultDTO=null;
 		
 		DepositDTO depositDTO=new DepositDTO(accountId,amount,userEmail);
-		String messageExpected="El user con Email " + userEmail +" no esta activo";
+		
 		
 		Account account=AccountBuilder.getAccount();
 		Users user=UsersBuilder.getUsers();
@@ -222,8 +232,6 @@ class BankTransactionServiceMockTest {
 		when(accountService.findById(accountId)).thenReturn(Optional.ofNullable(account));
 		when(userService.findById(userEmail)).thenReturn(Optional.ofNullable(user));
 		when(transactionTypeService.findById(2)).thenReturn(Optional.ofNullable(transactionType));
-		
-		
 		
 		when(transactionService.save(any(Transaction.class))).then(new Answer<Transaction>() {
 	        int sequence = 1;
@@ -241,9 +249,7 @@ class BankTransactionServiceMockTest {
 		transactionResultDTO=bankTransactionService.deposit(depositDTO);
 		
         //Assert
-		assertEquals(amountExpected, transactionResultDTO.getBalance());
-		
-				
+		assertEquals(amountExpected, transactionResultDTO.getBalance());				
 	}
 	
 	
