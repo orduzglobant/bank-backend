@@ -1,8 +1,8 @@
 package com.vobi.devops.bank.service;
 
-import static org.hamcrest.CoreMatchers.any;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
@@ -12,7 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vobi.devops.bank.builder.AccountBuilder;
@@ -200,7 +202,6 @@ class BankTransactionServiceMockTest {
 	}
 	
 	@Test
-	@Disabled
 	void debeDepositar() throws Exception{
 		//Arrange
 		String accountId="4640-0341-9387-5781";
@@ -222,15 +223,26 @@ class BankTransactionServiceMockTest {
 		when(userService.findById(userEmail)).thenReturn(Optional.ofNullable(user));
 		when(transactionTypeService.findById(2)).thenReturn(Optional.ofNullable(transactionType));
 		
-		/*
-		when(transactionService.save()).thenReturn(null);
-        
 		
+		
+		when(transactionService.save(any(Transaction.class))).then(new Answer<Transaction>() {
+	        int sequence = 1;
+
+			@Override
+			public Transaction answer(InvocationOnMock invocation) throws Throwable {
+				Transaction transaction=invocation.getArgument(0);
+				transaction.setTranId(sequence);
+				return transaction;
+			}
+	            
+	       
+	    });
+
 		transactionResultDTO=bankTransactionService.deposit(depositDTO);
 		
         //Assert
 		assertEquals(amountExpected, transactionResultDTO.getBalance());
-		*/
+		
 				
 	}
 	
