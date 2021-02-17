@@ -24,6 +24,7 @@ import com.vobi.devops.bank.domain.TransactionType;
 import com.vobi.devops.bank.domain.Users;
 import com.vobi.devops.bank.dto.DepositDTO;
 import com.vobi.devops.bank.dto.TransactionResultDTO;
+import com.vobi.devops.bank.dto.WithdrawDTO;
 import com.vobi.devops.bank.exception.ZMessManager.AccountNotEnableException;
 import com.vobi.devops.bank.exception.ZMessManager.AccountNotFoundException;
 import com.vobi.devops.bank.exception.ZMessManager.UserDisableException;
@@ -31,7 +32,7 @@ import com.vobi.devops.bank.exception.ZMessManager.UserNotFoundException;
 
 
 @ExtendWith(MockitoExtension.class)
-class BankTransactionServiceDepositMockTest {
+class BankTransactionServiceWithdrawMockTest {
 	
 	@InjectMocks
 	private BankTransactionServiceImpl bankTransactionService;
@@ -49,14 +50,14 @@ class BankTransactionServiceDepositMockTest {
 	TransactionServiceImpl transactionService;
 	
 	@Test
-	void debeLanzarExceptionDepositDTONull() throws Exception{
+	void debeLanzarExceptionWithdrawDTONull() throws Exception{
 		//Arrange
-		DepositDTO depositDTO=null;
-		String messageExpected="El depositDTO es nulo";		
+		WithdrawDTO withdrawDTO=null;
+		String messageExpected="El WithdrawDTO es nulo";		
 
         //Act
 		Exception exception =assertThrows(Exception.class,()->{
-			bankTransactionService.deposit(depositDTO);
+			bankTransactionService.withdraw(withdrawDTO);
 		});
 		
         //Assert
@@ -66,12 +67,16 @@ class BankTransactionServiceDepositMockTest {
 	@Test
 	void debeLanzarExceptionAccountIdNull() throws Exception{
 		//Arrange
-		DepositDTO depositDTO=new DepositDTO(null,15000.0,"vondrusek1@wisc.edu");
+		
+		String userEmail="vondrusek1@wisc.edu";
+		Double amount=15000.0;
+				
+		WithdrawDTO withdrawDTO=new WithdrawDTO(null,amount,userEmail);
 		String messageExpected="El AccoId es obligatorio";		
 
         //Act
 		Exception exception =assertThrows(Exception.class,()->{
-			bankTransactionService.deposit(depositDTO);
+			bankTransactionService.withdraw(withdrawDTO);
 		});
 		
         //Assert
@@ -82,12 +87,15 @@ class BankTransactionServiceDepositMockTest {
 	void debeLanzarExceptionAmountMenorACero() throws Exception{
 		//Arrange
 		String accountId="4640-0341-9387-5781";
-		DepositDTO depositDTO=new DepositDTO(accountId,-1.0,"vondrusek1@wisc.edu");
+		String userEmail="vondrusek1@wisc.edu";
+		Double amount=-1.0;
+				
+		WithdrawDTO withdrawDTO=new WithdrawDTO(accountId,amount,userEmail);
 		String messageExpected="El Amount es obligatorio y debe ser mayor que cero";		
-		
+
         //Act
 		Exception exception =assertThrows(Exception.class,()->{
-			bankTransactionService.deposit(depositDTO);
+			bankTransactionService.withdraw(withdrawDTO);
 		});
 		
         //Assert
@@ -98,45 +106,53 @@ class BankTransactionServiceDepositMockTest {
 	void debeLanzarExceptionAmountNull() throws Exception{
 		//Arrange
 		String accountId="4640-0341-9387-5781";
-		DepositDTO depositDTO=new DepositDTO(accountId,null,"vondrusek1@wisc.edu");
+		String userEmail="vondrusek1@wisc.edu";
+		Double amount=null;
+				
+		WithdrawDTO withdrawDTO=new WithdrawDTO(accountId,amount,userEmail);
 		String messageExpected="El Amount es obligatorio y debe ser mayor que cero";		
-		
+
         //Act
 		Exception exception =assertThrows(Exception.class,()->{
-			bankTransactionService.deposit(depositDTO);
+			bankTransactionService.withdraw(withdrawDTO);
 		});
 		
         //Assert
-		assertEquals(messageExpected,exception.getMessage());		
+		assertEquals(messageExpected,exception.getMessage());	
 	}
 	
 	@Test
 	void debeLanzarExceptionUserEmailNull() throws Exception{
 		//Arrange
 		String accountId="4640-0341-9387-5781";
-		DepositDTO depositDTO=new DepositDTO(accountId,1500000.0,null);
+		String userEmail=null;
+		Double amount=1500000.0;
+				
+		WithdrawDTO withdrawDTO=new WithdrawDTO(accountId,amount,userEmail);
 		String messageExpected="El UserEmail es obligatorio";		
-		
+
         //Act
 		Exception exception =assertThrows(Exception.class,()->{
-			bankTransactionService.deposit(depositDTO);
+			bankTransactionService.withdraw(withdrawDTO);
 		});
 		
         //Assert
-		assertEquals(messageExpected,exception.getMessage());		
+		assertEquals(messageExpected,exception.getMessage());	
 	}
 	
 	@Test
 	void debeLanzarExceptionAccountNotFound() throws Exception{
 		//Arrange
 		String accountId="4640-0341-9387-5781";
-		DepositDTO depositDTO=new DepositDTO(accountId,15000.0,"vondrusek1@wisc.edu");
+		String userEmail="vondrusek1@wisc.edu";
+		Double amount=1500000.0;
+		WithdrawDTO withdrawDTO=new WithdrawDTO(accountId,amount,userEmail);
 		String messageExpected="The account with id " + accountId +" was not found";
 		when(accountService.findById(accountId)).thenReturn(Optional.ofNullable(null));
 
         //Act
 		Exception exception =assertThrows(AccountNotFoundException.class,()->{
-			bankTransactionService.deposit(depositDTO);
+			bankTransactionService.withdraw(withdrawDTO);
 		});
         //Assert
 		
@@ -147,14 +163,16 @@ class BankTransactionServiceDepositMockTest {
 	void debeLanzarExceptionAccountNoActiva() throws Exception{
 		//Arrange
 		String accountId="4640-0341-9387-5781";
-		DepositDTO depositDTO=new DepositDTO(accountId,15000.0,"vondrusek1@wisc.edu");
+		String userEmail="vondrusek1@wisc.edu";
+		Double amount=1500000.0;
+		WithdrawDTO withdrawDTO=new WithdrawDTO(accountId,amount,userEmail);
 		String messageExpected="La cuenta con id " + accountId +" no esta activa";
 		Account account=AccountBuilder.getAccountDisable();
 		when(accountService.findById(accountId)).thenReturn(Optional.ofNullable(account));
 
         //Act
 		Exception exception =assertThrows(AccountNotEnableException.class,()->{
-			bankTransactionService.deposit(depositDTO);
+			bankTransactionService.withdraw(withdrawDTO);
 		});
         //Assert
 		
@@ -166,9 +184,8 @@ class BankTransactionServiceDepositMockTest {
 		//Arrange
 		String accountId="4640-0341-9387-5781";
 		String userEmail="vondrusek1@wisc.edu";
-		Double amount=15000.0;
-		
-		DepositDTO depositDTO=new DepositDTO(accountId,amount,userEmail);
+		Double amount=1500000.0;
+		WithdrawDTO withdrawDTO=new WithdrawDTO(accountId,amount,userEmail);
 		String messageExpected="La user con Email " + userEmail +" no esta existe";
 		Account account=AccountBuilder.getAccount();
 		
@@ -179,7 +196,7 @@ class BankTransactionServiceDepositMockTest {
 		
         //Act
 		Exception exception =assertThrows(UserNotFoundException.class,()->{
-			bankTransactionService.deposit(depositDTO);
+			bankTransactionService.withdraw(withdrawDTO);
 		});
         //Assert
 		
@@ -191,9 +208,9 @@ class BankTransactionServiceDepositMockTest {
 		//Arrange
 		String accountId="4640-0341-9387-5781";
 		String userEmail="vondrusek1@wisc.edu";
-		Double amount=15000.0;
+		Double amount=1500000.0;
+		WithdrawDTO withdrawDTO=new WithdrawDTO(accountId,amount,userEmail);
 		
-		DepositDTO depositDTO=new DepositDTO(accountId,amount,userEmail);
 		String messageExpected="El user con Email " + userEmail +" no esta activo";
 		Account account=AccountBuilder.getAccount();
 		Users user=UsersBuilder.getUsersDisable();
@@ -204,7 +221,7 @@ class BankTransactionServiceDepositMockTest {
 		
         //Act
 		Exception exception =assertThrows(UserDisableException.class,()->{
-			bankTransactionService.deposit(depositDTO);
+			bankTransactionService.withdraw(withdrawDTO);
 		});
         //Assert
 		
@@ -212,26 +229,25 @@ class BankTransactionServiceDepositMockTest {
 	}
 	
 	@Test
-	void debeDepositar() throws Exception{
+	void debeWithdraw() throws Exception{
 		//Arrange
 		String accountId="4640-0341-9387-5781";
 		String userEmail="vondrusek1@wisc.edu";
-		Double amount=15000.0;
+		Double amount=1500000.0;
+		WithdrawDTO withdrawDTO=new WithdrawDTO(accountId,amount,userEmail);
 		
 		TransactionResultDTO transactionResultDTO=null;
-		
-		DepositDTO depositDTO=new DepositDTO(accountId,amount,userEmail);
 		
 		
 		Account account=AccountBuilder.getAccount();
 		Users user=UsersBuilder.getUsers();
 		TransactionType transactionType=TransactionTypeBuilder.getTransactionTypeConsignacion();
 		
-		Double amountExpected=account.getBalance()+amount;
+		Double amountExpected=account.getBalance()-amount;
 		
 		when(accountService.findById(accountId)).thenReturn(Optional.ofNullable(account));
 		when(userService.findById(userEmail)).thenReturn(Optional.ofNullable(user));
-		when(transactionTypeService.findById(2)).thenReturn(Optional.ofNullable(transactionType));
+		when(transactionTypeService.findById(1)).thenReturn(Optional.ofNullable(transactionType));
 		
 		when(transactionService.save(any(Transaction.class))).then(new Answer<Transaction>() {
 	        int sequence = 1;
@@ -246,7 +262,7 @@ class BankTransactionServiceDepositMockTest {
 	       
 	    });
 
-		transactionResultDTO=bankTransactionService.deposit(depositDTO);
+		transactionResultDTO=bankTransactionService.withdraw(withdrawDTO);
 		
         //Assert
 		assertEquals(amountExpected, transactionResultDTO.getBalance());				

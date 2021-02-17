@@ -97,27 +97,23 @@ public class BankTransactionServiceImpl implements BankTransactionService {
 		}
 
 		if (accountService.findById(withdrawDTO.getAccoId()).isPresent() == false) {
-			throw new Exception("El Account con id:" + withdrawDTO.getAccoId() + " No existe");
+			throw new ZMessManager().new AccountNotFoundException(withdrawDTO.getAccoId());
 		}
 
 		Account account = accountService.findById(withdrawDTO.getAccoId()).get();
 
 		if (account.getEnable().trim().equals("N") == true) {
-			throw new Exception("El Account con id:" + withdrawDTO.getAccoId() + " Se encuentra inactiva");
-		}
-
-		if (account.getBalance().compareTo(withdrawDTO.getAmount()) < 0) {
-			throw new Exception("El Account con id:" + withdrawDTO.getAccoId() + " No tiene saldo suficiente");
+			throw new ZMessManager().new AccountNotEnableException(withdrawDTO.getAccoId());
 		}
 
 		if (userService.findById(withdrawDTO.getUserEmail()).isPresent() == false) {
-			throw new Exception("El user con id:" + withdrawDTO.getUserEmail() + " No existe");
+			throw new ZMessManager().new UserNotFoundException(withdrawDTO.getUserEmail());
 		}
 
 		Users user = userService.findById(withdrawDTO.getUserEmail()).get();
 
 		if (user.getEnable().trim().equals("N") == true) {
-			throw new Exception("El user con id:" + withdrawDTO.getUserEmail() + " Se encuentra inactiva");
+			throw new ZMessManager().new UserDisableException(withdrawDTO.getUserEmail());
 		}
 
 		TransactionType transactionType = transactionTypeService.findById(1).get();
