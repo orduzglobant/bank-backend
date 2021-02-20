@@ -21,11 +21,73 @@ stages:
 - stage: 'Build'
   displayName: 'Build the back-end app'
   jobs:
-  - job: Install_Java11
-    displayName: Install_Java11
+
+  - job: Clean_Sources
+    displayName: Clean Sources
     steps:
-    - task: JavaToolInstaller@0
+    - task: Maven@3
       inputs:
-        versionSpec: '11'
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '11'
         jdkArchitectureOption: 'x64'
-        jdkSourceOption: 'PreInstalled'
+        publishJUnitResults: false
+        goals: 'clean'
+
+  - job: Compile
+    displayName: Compile
+    dependsOn: Clean_Sources
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '11'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: false
+        goals: 'compile -DskipTests=true'
+
+  - job: Test_Sources
+    displayName: Test Sources
+    dependsOn: Compile
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '11'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        goals: 'test'
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: 'JaCoCo'
+        summaryFileLocation: '**/site/jacoco/jacoco.xml'
+        reportDirectory:     '**/site/jacoco/'
+        
+  - job: Package
+    displayName: Package
+    dependsOn: Test_Sources
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '11'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: false
+        goals: 'package -DskipTests=true'
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: '**/target/*.?(war|jar)'
+        TargetFolder: '$(build.artifactstagingdirectory)'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)'
+        artifactName: drop
