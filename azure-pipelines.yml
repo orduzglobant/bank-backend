@@ -22,36 +22,36 @@ stages:
   displayName: 'Build the back-end app'
   jobs:
 
-  - job: Clean_Sources
-    displayName: Clean Sources
-    steps:
-    - task: Maven@3
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '11'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: false
-        goals: 'clean'
-
-  - job: Compile
-    displayName: Compile
-    dependsOn: Clean_Sources
-    steps:
-    - task: Maven@3
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '11'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: false
-        goals: 'compile -DskipTests=true'
+#  - job: Clean_Sources
+#    displayName: Clean Sources
+#    steps:
+#    - task: Maven@3
+#      inputs:
+#        mavenPomFile: 'pom.xml'
+#        mavenOptions: '-Xmx3072m'
+#        javaHomeOption: 'JDKVersion'
+#        jdkVersionOption: '11'
+#        jdkArchitectureOption: 'x64'
+#        publishJUnitResults: false
+#        goals: 'clean'
+#
+#  - job: Compile
+#    displayName: Compile
+#    dependsOn: Clean_Sources
+#    steps:
+#    - task: Maven@3
+#      inputs:
+#        mavenPomFile: 'pom.xml'
+#        mavenOptions: '-Xmx3072m'
+#        javaHomeOption: 'JDKVersion'
+#        jdkVersionOption: '11'
+#        jdkArchitectureOption: 'x64'
+#        publishJUnitResults: false
+#        goals: 'compile -DskipTests=true'
 
   - job: Test_Sources
     displayName: Test Sources
-    dependsOn: Compile
+#   dependsOn: Compile
     steps:
     - task: Maven@3
       inputs:
@@ -91,3 +91,79 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
         artifactName: drop
+
+- stage: 'Dev'
+  displayName: 'Deploy to the dev environment'
+  dependsOn: Build
+  condition: |
+   and
+    (
+      succeeded(),
+      eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+    )
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-20.04'
+    environment: dev
+    variables:
+    - group: Release
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - task: AzureWebApp@1
+            displayName: 'Azure App Service Deploy: backend'
+            inputs:
+              azureSubscription: 'bank-azure'
+              appName: '$(WebAppNameDev)'
+              package: '$(Pipeline.Workspace)/drop/target/*.jar'
+ 
+- stage: 'Test'
+  displayName: 'Deploy to the test environment'
+  dependsOn: Dev
+  #condition: eq(variables['Build.Reason'], 'Schedule')
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-20.04'
+    environment: test
+    variables:
+    - group: Release
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - task: AzureWebApp@1
+            displayName: 'Azure App Service Deploy: backend'
+            inputs:
+              azureSubscription: 'bank-azure'
+              appName: '$(WebAppNameTest)'
+              package: '$(Pipeline.Workspace)/drop/target/*.jar'
+
+- stage: 'Staging'
+  displayName: 'Deploy to the Staging environment'
+  dependsOn: Test
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-20.04'
+    environment: staging
+    variables:
+    - group: Release
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - task: AzureWebApp@1
+            displayName: 'Azure App Service Deploy: backend'
+            inputs:
+              azureSubscription: 'bank-azure'
+              appName: '$(WebAppNameStaging)'
+              package: '$(Pipeline.Workspace)/drop/target/*.jar'
