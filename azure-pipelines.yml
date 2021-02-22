@@ -31,6 +31,7 @@ stages:
 - stage: 'Build'
   displayName: 'Clean Build Test y Package the back-end app'
   jobs:
+  - job: Install_Java11
     steps:
     - task: Cache@2
       displayName: Cache Maven local repo
