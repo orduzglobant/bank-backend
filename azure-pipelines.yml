@@ -32,6 +32,7 @@ stages:
   displayName: 'Clean Build Test y Package the back-end app'
   jobs:
   - job:
+    displayName: 'Clean, Build, Test, Package the back-end app'
     steps:
     - task: Cache@2
       displayName: Cache Maven local repo
