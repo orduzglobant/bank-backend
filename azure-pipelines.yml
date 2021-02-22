@@ -29,21 +29,9 @@ schedules:
 stages:
 
 - stage: 'Build'
-  displayName: 'Build the back-end app'
+  displayName: 'Clean Build Test y Package the back-end app'
   jobs:
-
-  - job: Clean_Sources
-    displayName: Clean Sources
     steps:
-    - task: Maven@3
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '11'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: false
-        goals: 'clean'
     - task: Cache@2
       inputs:
         key: 'maven | "$(Agent.OS)" | **/pom.xml'
@@ -54,12 +42,20 @@ stages:
       displayName: Cache Maven local repo
     
     - script: mvn install -B -e
-
-  - job: Compile
-    displayName: Compile
-    dependsOn: Clean_Sources
-    steps:
+    
     - task: Maven@3
+      displayName: Clean Sources
+      inputs:
+        mavenPomFile: 'pom.xml'
+        mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '11'
+        jdkArchitectureOption: 'x64'
+        publishJUnitResults: false
+        goals: 'clean'
+
+    - task: Maven@3
+      displayName: Compile
       inputs:
         mavenPomFile: 'pom.xml'
         mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
@@ -69,11 +65,8 @@ stages:
         publishJUnitResults: false
         goals: 'compile -DskipTests=true'
 
-  - job: Test_Sources
-    displayName: Test Sources
-    dependsOn: Compile
-    steps:
     - task: Maven@3
+      displayName: Test Sources
       inputs:
         mavenPomFile: 'pom.xml'
         mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
@@ -89,11 +82,8 @@ stages:
         summaryFileLocation: '**/site/jacoco/jacoco.xml'
         reportDirectory:     '**/site/jacoco/'
         
-  - job: Package
-    displayName: Package
-    dependsOn: Test_Sources
-    steps:
     - task: Maven@3
+      displayName: Package
       inputs:
         mavenPomFile: 'pom.xml'
         mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
