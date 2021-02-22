@@ -33,14 +33,14 @@ stages:
   jobs:
     steps:
     - task: Cache@2
+      displayName: Cache Maven local repo
       inputs:
         key: 'maven | "$(Agent.OS)" | **/pom.xml'
         restoreKeys: |
           maven | "$(Agent.OS)"
           maven
         path: $(MAVEN_CACHE_FOLDER)
-      displayName: Cache Maven local repo
-    
+
     - script: mvn install -B -e
     
     - task: Maven@3
@@ -53,51 +53,3 @@ stages:
         jdkArchitectureOption: 'x64'
         publishJUnitResults: false
         goals: 'clean'
-
-    - task: Maven@3
-      displayName: Compile
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '11'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: false
-        goals: 'compile -DskipTests=true'
-
-    - task: Maven@3
-      displayName: Test Sources
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '11'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: true
-        testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        goals: 'test'
-    - task: PublishCodeCoverageResults@1
-      inputs:
-        codeCoverageTool: 'JaCoCo'
-        summaryFileLocation: '**/site/jacoco/jacoco.xml'
-        reportDirectory:     '**/site/jacoco/'
-        
-    - task: Maven@3
-      displayName: Package
-      inputs:
-        mavenPomFile: 'pom.xml'
-        mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
-        javaHomeOption: 'JDKVersion'
-        jdkVersionOption: '11'
-        jdkArchitectureOption: 'x64'
-        publishJUnitResults: false
-        goals: 'package -DskipTests=true'
-    - task: CopyFiles@2
-      inputs:
-        SourceFolder: '$(Build.SourcesDirectory)'
-        Contents: '**/target/*.?(war|jar)'
-        TargetFolder: '$(build.artifactstagingdirectory)'
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(build.artifactstagingdirectory)'
-        artifactName: drop
