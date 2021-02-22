@@ -28,7 +28,7 @@ schedules:
 
 stages:
 
-- stage: Clean_Build_Test_Y_Package'
+- stage: Clean_Build_Test_Y_Package
   displayName: 'Clean Build Test y Package the back-end app'
   jobs:
   - job:
