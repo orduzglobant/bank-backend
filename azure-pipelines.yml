@@ -42,8 +42,6 @@ stages:
           maven | "$(Agent.OS)"
           maven
         path: $(MAVEN_CACHE_FOLDER)
-
-    - script: mvn install -B -e
     
     - task: Maven@3
       displayName: Clean Sources
