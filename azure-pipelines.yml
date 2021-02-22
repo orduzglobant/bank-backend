@@ -31,7 +31,7 @@ stages:
 - stage: 'Build'
   displayName: 'Clean Build Test y Package the back-end app'
   jobs:
-  - job: Install_Java11
+  - job:
     steps:
     - task: Cache@2
       displayName: Cache Maven local repo
@@ -54,6 +54,7 @@ stages:
         jdkArchitectureOption: 'x64'
         publishJUnitResults: false
         goals: 'clean'
+        
     - task: Maven@3
       displayName: Compile
       inputs:
