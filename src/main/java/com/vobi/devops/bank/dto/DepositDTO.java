@@ -1,9 +1,14 @@
 package com.vobi.devops.bank.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class DepositDTO {
 
+	@NotNull
 	private String accoId;
+	@NotNull
 	private Double amount;
+	@NotNull
 	private String userEmail;
 
 	public DepositDTO(String accoId, Double amount, String userEmail) {

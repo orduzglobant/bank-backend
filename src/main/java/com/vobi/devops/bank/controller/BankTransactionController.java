@@ -1,5 +1,7 @@
 package com.vobi.devops.bank.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,14 +18,14 @@ import com.vobi.devops.bank.service.BankTransactionService;
 
 @RestController
 @RequestMapping("/api/v1/transactions")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class BankTransactionController {
 
 	@Autowired
 	BankTransactionService bankTransaction;
 
 	@PostMapping("/transfer")
-	public ResponseEntity<TransactionResultDTO> transfer(@RequestBody TransferDTO transferDTO) throws Exception {
+	public ResponseEntity<TransactionResultDTO> transfer(@Valid @RequestBody TransferDTO transferDTO) throws Exception {
 
 		TransactionResultDTO transactionResultDTO = bankTransaction.transfer(transferDTO);
 		return ResponseEntity.ok().body(transactionResultDTO);
@@ -31,7 +33,7 @@ public class BankTransactionController {
 	}
 
 	@PostMapping("/withdraw")
-	public ResponseEntity<TransactionResultDTO> withdraw(@RequestBody WithdrawDTO withdrawDTO) throws Exception {
+	public ResponseEntity<TransactionResultDTO> withdraw(@Valid @RequestBody WithdrawDTO withdrawDTO) throws Exception {
 
 		TransactionResultDTO transactionResultDTO = bankTransaction.withdraw(withdrawDTO);
 		return ResponseEntity.ok().body(transactionResultDTO);
@@ -39,7 +41,7 @@ public class BankTransactionController {
 	}
 
 	@PostMapping("/deposit")
-	public ResponseEntity<TransactionResultDTO> deposit(@RequestBody DepositDTO depositDTO) throws Exception {
+	public ResponseEntity<TransactionResultDTO> deposit(@Valid @RequestBody DepositDTO depositDTO) throws Exception {
 
 		TransactionResultDTO transactionResultDTO = bankTransaction.deposit(depositDTO);
 		return ResponseEntity.ok().body(transactionResultDTO);

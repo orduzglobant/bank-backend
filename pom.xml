@@ -108,12 +108,16 @@
 					<excludes>
 						<!-- exclude class -->
 						<exclude>com/vobi/devops/bank/SpringBootRunner.class</exclude>
-						<!-- exclude classes in package com.vobi.demo.dto-->
+						
+						<!-- exclude classes in package -->
+						<exclude>com/vobi/devops/bank/entityservice/*</exclude>
+						<exclude>com/vobi/devops/bank/entitycontroller/*</exclude>
 						<exclude>com/vobi/devops/bank/dto/*</exclude>
 						<exclude>com/vobi/devops/bank/domain/*</exclude>
 						<exclude>com/vobi/devops/bank/mapper/*</exclude>
 						<exclude>com/vobi/devops/bank/utility/*</exclude>
 						<exclude>com/vobi/devops/bank/exception/*</exclude>
+						
 					</excludes>
 				</configuration>
 				<executions>

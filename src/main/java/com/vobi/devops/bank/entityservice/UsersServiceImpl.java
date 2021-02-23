@@ -1,4 +1,4 @@
-package com.vobi.devops.bank.service;
+package com.vobi.devops.bank.entityservice;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.vobi.devops.bank.domain.UserType;
+import com.vobi.devops.bank.domain.Transaction;
 import com.vobi.devops.bank.domain.Users;
 import com.vobi.devops.bank.exception.ZMessManager;
-import com.vobi.devops.bank.repository.UserTypeRepository;
+import com.vobi.devops.bank.repository.UsersRepository;
 import com.vobi.devops.bank.utility.Utilities;
 
 /**
@@ -28,18 +28,18 @@ import com.vobi.devops.bank.utility.Utilities;
 
 @Scope("singleton")
 @Service
-public class UserTypeServiceImpl implements UserTypeService {
+public class UsersServiceImpl implements UsersService {
 
 	@Autowired
-	private UserTypeRepository userTypeRepository;
+	private UsersRepository usersRepository;
 
 	@Autowired
 	private Validator validator;
 
 	@Override
-	public void validate(UserType userType) throws ConstraintViolationException {
+	public void validate(Users users) throws ConstraintViolationException {
 
-		Set<ConstraintViolation<UserType>> constraintViolations = validator.validate(userType);
+		Set<ConstraintViolation<Users>> constraintViolations = validator.validate(users);
 		if (!constraintViolations.isEmpty()) {
 			throw new ConstraintViolationException(constraintViolations);
 		}
@@ -49,96 +49,96 @@ public class UserTypeServiceImpl implements UserTypeService {
 	@Override
 	@Transactional(readOnly = true)
 	public Long count() {
-		return userTypeRepository.count();
+		return usersRepository.count();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<UserType> findAll() {
+	public List<Users> findAll() {
 
-		return userTypeRepository.findAll();
+		return usersRepository.findAll();
 	}
 
 	@Override
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public UserType save(UserType entity) throws Exception {
+	public Users save(Users entity) throws Exception {
 
 		if (entity == null) {
-			throw new ZMessManager().new NullEntityExcepcion("UserType");
+			throw new ZMessManager().new NullEntityExcepcion("Users");
 		}
 
 		validate(entity);
 
-		if (userTypeRepository.existsById(entity.getUstyId())) {
+		if (usersRepository.existsById(entity.getUserEmail())) {
 			throw new ZMessManager(ZMessManager.ENTITY_WITHSAMEKEY);
 		}
 
-		return userTypeRepository.save(entity);
+		return usersRepository.save(entity);
 
 	}
 
 	@Override
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void delete(UserType entity) throws Exception {
+	public void delete(Users entity) throws Exception {
 
 		if (entity == null) {
-			throw new ZMessManager().new NullEntityExcepcion("UserType");
+			throw new ZMessManager().new NullEntityExcepcion("Users");
 		}
 
-		if (entity.getUstyId() == null) {
-			throw new ZMessManager().new EmptyFieldException("ustyId");
+		if (entity.getUserEmail() == null) {
+			throw new ZMessManager().new EmptyFieldException("userEmail");
 		}
 
-		if (userTypeRepository.existsById(entity.getUstyId()) == false) {
+		if (usersRepository.existsById(entity.getUserEmail()) == false) {
 			throw new ZMessManager(ZMessManager.ENTITY_WITHSAMEKEY);
 		}
 
-		findById(entity.getUstyId()).ifPresent(entidad -> {
-			List<Users> userses = entidad.getUserses();
-			if (Utilities.validationsList(userses) == true) {
-				throw new ZMessManager().new DeletingException("userses");
+		findById(entity.getUserEmail()).ifPresent(entidad -> {
+			List<Transaction> transactions = entidad.getTransactions();
+			if (Utilities.validationsList(transactions) == true) {
+				throw new ZMessManager().new DeletingException("transactions");
 			}
 		});
 
-		userTypeRepository.deleteById(entity.getUstyId());
+		usersRepository.deleteById(entity.getUserEmail());
 
 	}
 
 	@Override
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void deleteById(Integer id) throws Exception {
+	public void deleteById(String id) throws Exception {
 
 		if (id == null) {
-			throw new ZMessManager().new EmptyFieldException("ustyId");
+			throw new ZMessManager().new EmptyFieldException("userEmail");
 		}
-		if (userTypeRepository.existsById(id)) {
-			delete(userTypeRepository.findById(id).get());
+		if (usersRepository.existsById(id)) {
+			delete(usersRepository.findById(id).get());
 		}
 	}
 
 	@Override
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public UserType update(UserType entity) throws Exception {
+	public Users update(Users entity) throws Exception {
 
 		if (entity == null) {
-			throw new ZMessManager().new NullEntityExcepcion("UserType");
+			throw new ZMessManager().new NullEntityExcepcion("Users");
 		}
 
 		validate(entity);
 
-		if (userTypeRepository.existsById(entity.getUstyId()) == false) {
+		if (usersRepository.existsById(entity.getUserEmail()) == false) {
 			throw new ZMessManager(ZMessManager.ENTITY_WITHSAMEKEY);
 		}
 
-		return userTypeRepository.save(entity);
+		return usersRepository.save(entity);
 
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<UserType> findById(Integer ustyId) {
+	public Optional<Users> findById(String userEmail) {
 
-		return userTypeRepository.findById(ustyId);
+		return usersRepository.findById(userEmail);
 	}
 
 }

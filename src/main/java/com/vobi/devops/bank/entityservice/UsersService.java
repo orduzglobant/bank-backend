@@ -1,4 +1,4 @@
-package com.vobi.devops.bank.service;
+package com.vobi.devops.bank.entityservice;
 
 import com.vobi.devops.bank.domain.Users;
 

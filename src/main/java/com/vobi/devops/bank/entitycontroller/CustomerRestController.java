@@ -1,4 +1,4 @@
-package com.vobi.devops.bank.controller;
+package com.vobi.devops.bank.entitycontroller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vobi.devops.bank.domain.*;
 import com.vobi.devops.bank.dto.CustomerDTO;
+import com.vobi.devops.bank.entityservice.CustomerService;
 import com.vobi.devops.bank.mapper.CustomerMapper;
-import com.vobi.devops.bank.service.CustomerService;
 
 import javax.validation.Valid;
 

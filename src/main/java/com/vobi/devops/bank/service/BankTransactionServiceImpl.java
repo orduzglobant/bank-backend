@@ -16,14 +16,17 @@ import com.vobi.devops.bank.dto.DepositDTO;
 import com.vobi.devops.bank.dto.TransactionResultDTO;
 import com.vobi.devops.bank.dto.TransferDTO;
 import com.vobi.devops.bank.dto.WithdrawDTO;
-
+import com.vobi.devops.bank.entityservice.AccountService;
+import com.vobi.devops.bank.entityservice.TransactionService;
+import com.vobi.devops.bank.entityservice.TransactionTypeService;
+import com.vobi.devops.bank.entityservice.UsersService;
 import com.vobi.devops.bank.exception.ZMessManager;
 
 @Service
 @Scope("singleton")
 public class BankTransactionServiceImpl implements BankTransactionService {
 
-	private final static Double COSTO = 2000D;
+	private final static Double COSTO = 2000.0;
 
 	@Autowired
 	AccountService accountService;

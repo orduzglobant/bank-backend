@@ -1,4 +1,4 @@
-package com.vobi.devops.bank.controller;
+package com.vobi.devops.bank.entitycontroller;
 
 import java.time.Instant;
 import java.util.Collections;

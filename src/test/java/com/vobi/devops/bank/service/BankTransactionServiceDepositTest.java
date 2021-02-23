@@ -24,6 +24,10 @@ import com.vobi.devops.bank.domain.TransactionType;
 import com.vobi.devops.bank.domain.Users;
 import com.vobi.devops.bank.dto.DepositDTO;
 import com.vobi.devops.bank.dto.TransactionResultDTO;
+import com.vobi.devops.bank.entityservice.AccountServiceImpl;
+import com.vobi.devops.bank.entityservice.TransactionServiceImpl;
+import com.vobi.devops.bank.entityservice.TransactionTypeServiceImpl;
+import com.vobi.devops.bank.entityservice.UsersServiceImpl;
 import com.vobi.devops.bank.exception.ZMessManager.AccountNotEnableException;
 import com.vobi.devops.bank.exception.ZMessManager.AccountNotFoundException;
 import com.vobi.devops.bank.exception.ZMessManager.UserDisableException;
@@ -31,7 +35,7 @@ import com.vobi.devops.bank.exception.ZMessManager.UserNotFoundException;
 
 
 @ExtendWith(MockitoExtension.class)
-class BankTransactionServiceDepositMockTest {
+class BankTransactionServiceDepositTest {
 	
 	@InjectMocks
 	private BankTransactionServiceImpl bankTransactionService;
@@ -225,7 +229,7 @@ class BankTransactionServiceDepositMockTest {
 		
 		Account account=AccountBuilder.getAccount();
 		Users user=UsersBuilder.getUsers();
-		TransactionType transactionType=TransactionTypeBuilder.getTransactionTypeConsignacion();
+		TransactionType transactionType=TransactionTypeBuilder.getTransactionTypeDeposit();
 		
 		Double amountExpected=account.getBalance()+amount;
 		

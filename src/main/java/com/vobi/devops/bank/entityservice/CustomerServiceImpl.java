@@ -1,4 +1,4 @@
-package com.vobi.devops.bank.service;
+package com.vobi.devops.bank.entityservice;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +15,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.vobi.devops.bank.domain.Customer;
-import com.vobi.devops.bank.domain.DocumentType;
 import com.vobi.devops.bank.exception.ZMessManager;
-import com.vobi.devops.bank.repository.DocumentTypeRepository;
-import com.vobi.devops.bank.utility.Utilities;
+import com.vobi.devops.bank.repository.CustomerRepository;
 
 /**
  * @author Zathura Code Generator Version 9.0 http://zathuracode.org/
@@ -29,18 +27,18 @@ import com.vobi.devops.bank.utility.Utilities;
 @Scope("singleton")
 @Service
 
-public class DocumentTypeServiceImpl implements DocumentTypeService {
+public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
-	private DocumentTypeRepository documentTypeRepository;
+	private CustomerRepository customerRepository;
 
 	@Autowired
 	private Validator validator;
 
 	@Override
-	public void validate(DocumentType documentType) throws ConstraintViolationException {
+	public void validate(Customer customer) throws ConstraintViolationException {
 
-		Set<ConstraintViolation<DocumentType>> constraintViolations = validator.validate(documentType);
+		Set<ConstraintViolation<Customer>> constraintViolations = validator.validate(customer);
 		if (!constraintViolations.isEmpty()) {
 			throw new ConstraintViolationException(constraintViolations);
 		}
@@ -50,58 +48,51 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
 	@Override
 	@Transactional(readOnly = true)
 	public Long count() {
-		return documentTypeRepository.count();
+		return customerRepository.count();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<DocumentType> findAll() {
+	public List<Customer> findAll() {
 
-		return documentTypeRepository.findAll();
+		return customerRepository.findAll();
 	}
 
 	@Override
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public DocumentType save(DocumentType entity) throws Exception {
+	public Customer save(Customer entity) throws Exception {
 
 		if (entity == null) {
-			throw new ZMessManager().new NullEntityExcepcion("DocumentType");
+			throw new ZMessManager().new NullEntityExcepcion("Customer");
 		}
 
 		validate(entity);
 
-		if (documentTypeRepository.existsById(entity.getDotyId())) {
+		if (customerRepository.existsById(entity.getCustId())) {
 			throw new ZMessManager(ZMessManager.ENTITY_WITHSAMEKEY);
 		}
 
-		return documentTypeRepository.save(entity);
+		return customerRepository.save(entity);
 
 	}
 
 	@Override
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void delete(DocumentType entity) throws Exception {
+	public void delete(Customer entity) throws Exception {
 
 		if (entity == null) {
-			throw new ZMessManager().new NullEntityExcepcion("DocumentType");
+			throw new ZMessManager().new NullEntityExcepcion("Customer");
 		}
 
-		if (entity.getDotyId() == null) {
-			throw new ZMessManager().new EmptyFieldException("dotyId");
+		if (entity.getCustId() == null) {
+			throw new ZMessManager().new EmptyFieldException("custId");
 		}
 
-		if (documentTypeRepository.existsById(entity.getDotyId()) == false) {
+		if (customerRepository.existsById(entity.getCustId()) == false) {
 			throw new ZMessManager(ZMessManager.ENTITY_WITHSAMEKEY);
 		}
 
-		findById(entity.getDotyId()).ifPresent(entidad -> {
-			List<Customer> customers = entidad.getCustomers();
-			if (Utilities.validationsList(customers) == true) {
-				throw new ZMessManager().new DeletingException("customers");
-			}
-		});
-
-		documentTypeRepository.deleteById(entity.getDotyId());
+		customerRepository.deleteById(entity.getCustId());
 
 	}
 
@@ -110,36 +101,36 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
 	public void deleteById(Integer id) throws Exception {
 
 		if (id == null) {
-			throw new ZMessManager().new EmptyFieldException("dotyId");
+			throw new ZMessManager().new EmptyFieldException("custId");
 		}
-		if (documentTypeRepository.existsById(id)) {
-			delete(documentTypeRepository.findById(id).get());
+		if (customerRepository.existsById(id)) {
+			delete(customerRepository.findById(id).get());
 		}
 	}
 
 	@Override
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public DocumentType update(DocumentType entity) throws Exception {
+	public Customer update(Customer entity) throws Exception {
 
 		if (entity == null) {
-			throw new ZMessManager().new NullEntityExcepcion("DocumentType");
+			throw new ZMessManager().new NullEntityExcepcion("Customer");
 		}
 
 		validate(entity);
 
-		if (documentTypeRepository.existsById(entity.getDotyId()) == false) {
+		if (customerRepository.existsById(entity.getCustId()) == false) {
 			throw new ZMessManager(ZMessManager.ENTITY_WITHSAMEKEY);
 		}
 
-		return documentTypeRepository.save(entity);
+		return customerRepository.save(entity);
 
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<DocumentType> findById(Integer dotyId) {
+	public Optional<Customer> findById(Integer custId) {
 
-		return documentTypeRepository.findById(dotyId);
+		return customerRepository.findById(custId);
 	}
 
 }
