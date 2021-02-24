@@ -18,7 +18,7 @@ import com.vobi.devops.bank.dto.WithdrawDTO;
 import com.vobi.devops.bank.service.BankTransactionService;
 
 @WebMvcTest(BankTransactionController.class)
-class BankTransactionControllerWebMvcTest {
+class BankTransactionControllerWebMvcIT {
 	
 	@Autowired
 	MockMvc mockMvc;
