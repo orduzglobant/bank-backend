@@ -1,6 +1,7 @@
 package com.vobi.devops.bank.service;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -21,6 +22,7 @@ import com.vobi.devops.bank.entityservice.TransactionService;
 import com.vobi.devops.bank.entityservice.TransactionTypeService;
 import com.vobi.devops.bank.entityservice.UsersService;
 import com.vobi.devops.bank.exception.ZMessManager;
+import com.vobi.devops.bank.exception.ZMessManager.FindingException;
 
 @Service
 @Scope("singleton")
@@ -58,10 +60,26 @@ public class BankTransactionServiceImpl implements BankTransactionService {
 		depositDTO = new DepositDTO("9999-9999-9999-9999", COSTO, transferDTO.getUserEmail());
 		deposit(depositDTO);
 
-		TransactionType transactionType = transactionTypeService.findById(3).get();
+		
+		Optional<TransactionType> transactionType3 = transactionTypeService.findById(3);
+		if (!transactionType3.isPresent()) {
+			throw (new ZMessManager()).new FindingException("tipo de transacción 3");
+		}
+		TransactionType transactionType = transactionType3.get();
 
-		Account account = accountService.findById(transferDTO.getAccoIdOrigin()).get();
-		Users user = userService.findById(transferDTO.getUserEmail()).get();
+		Optional<Account> accountOptional = accountService.findById(transferDTO.getAccoIdOrigin());
+		if (!accountOptional.isPresent()) {
+			throw (new ZMessManager()).new FindingException("cuenta con id " + transferDTO.getAccoIdOrigin());
+		}
+		
+		Account account = accountOptional.get();
+		
+		Optional<Users> userOptional = userService.findById(transferDTO.getUserEmail());
+		if (!userOptional.isPresent()) {
+			throw (new ZMessManager()).new FindingException("Usuario con id " + transferDTO.getUserEmail());
+		}
+		
+		Users user = userOptional.get();
 
 		Transaction transaction = new Transaction();
 		transaction.setAccount(account);
@@ -73,10 +91,9 @@ public class BankTransactionServiceImpl implements BankTransactionService {
 
 		transactionService.save(transaction);
 
-		TransactionResultDTO transactionResultDTO = new TransactionResultDTO(transaction.getTranId(),
+		return new TransactionResultDTO(transaction.getTranId(),
 				withdrawResult.getBalance());
 
-		return transactionResultDTO;
 	}
 
 	@Override
