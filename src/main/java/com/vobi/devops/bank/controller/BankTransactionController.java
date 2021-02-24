@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,7 @@ import com.vobi.devops.bank.service.BankTransactionService;
 
 @RestController
 @RequestMapping("/api/v1/transactions")
-//@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")
 public class BankTransactionController {
 
 	@Autowired

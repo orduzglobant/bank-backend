@@ -261,9 +261,6 @@ public class BankTransactionServiceTest {
 			assertEquals(amountExpected, transactionResultDTO.getBalance());				
 		}
 		
-		
-		
-
 	}
 
 	@Nested
