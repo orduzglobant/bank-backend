@@ -17,7 +17,6 @@
 	<name>bank-backend</name>
 	<description>Spring Boot demo de Vortexbird para DevOps</description>
 
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
