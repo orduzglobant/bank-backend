@@ -28,6 +28,7 @@
          <!-- Por defecto, solo teste unitarios seran ejecutados. -->
         <skip.integration.tests>true</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
+        <skip.jacoco>false</skip.jacoco>
 	</properties>
 	
 	<profiles>
@@ -42,6 +43,7 @@
                 <!-- Solo los test de integracion seran ejecutados. -->
                 <skip.integration.tests>false</skip.integration.tests>
                 <skip.unit.tests>true</skip.unit.tests>
+                <skip.jacoco>true</skip.jacoco>
             </properties>
         </profile>
     </profiles>
@@ -155,6 +157,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.6</version>
 				<configuration>
+					<skip>${skip.jacoco}</skip>
 					<excludes>
 						<!-- exclude class -->
 						<exclude>com/vobi/devops/bank/SpringBootRunner.class</exclude>
