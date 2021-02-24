@@ -1,49 +1,25 @@
 package com.vobi.devops.bank.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vobi.devops.bank.builder.AccountBuilder;
-import com.vobi.devops.bank.builder.TransactionTypeBuilder;
-import com.vobi.devops.bank.builder.UsersBuilder;
-import com.vobi.devops.bank.domain.Account;
-import com.vobi.devops.bank.domain.Transaction;
-import com.vobi.devops.bank.domain.TransactionType;
-import com.vobi.devops.bank.domain.Users;
 import com.vobi.devops.bank.dto.DepositDTO;
 import com.vobi.devops.bank.dto.TransactionResultDTO;
 import com.vobi.devops.bank.dto.TransferDTO;
 import com.vobi.devops.bank.dto.WithdrawDTO;
-import com.vobi.devops.bank.entityservice.AccountServiceImpl;
-import com.vobi.devops.bank.entityservice.TransactionServiceImpl;
-import com.vobi.devops.bank.entityservice.TransactionTypeServiceImpl;
-import com.vobi.devops.bank.entityservice.UsersServiceImpl;
 import com.vobi.devops.bank.service.BankTransactionService;
-import com.vobi.devops.bank.service.BankTransactionServiceImpl;
 
-@WebMvcTest(value = BankTransactionController.class)
+@WebMvcTest(BankTransactionController.class)
 class BankTransactionControllerTest {
 	
 	@Autowired
@@ -55,7 +31,6 @@ class BankTransactionControllerTest {
 	@MockBean
 	BankTransactionService bankTransactionService;
 	
-
 	@Test
 	void debeRetornar200EnDeposit() throws Exception{
 		//Arrange
@@ -67,6 +42,7 @@ class BankTransactionControllerTest {
 		String jsonDepositDTO=objectMapper.writeValueAsString(depositDTO);
 		
 		TransactionResultDTO transactionResultDTO=new TransactionResultDTO(32, 85000.0);
+		
 		
 		when(bankTransactionService.deposit(depositDTO)).thenReturn(transactionResultDTO);
 
@@ -127,9 +103,5 @@ class BankTransactionControllerTest {
 				.andExpect(status().isBadRequest())
 				.andReturn();				
 	}
-	
-	
-	
-	
 
 }
