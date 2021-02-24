@@ -13,7 +13,7 @@ import com.vobi.devops.bank.dto.TransactionResultDTO;
 import com.vobi.devops.bank.service.BankTransactionService;
 
 @ExtendWith(MockitoExtension.class)
-class BankTransactionMockControllerTest {
+class BankTransactionControllerMockTest {
 	
 	@Mock
 	BankTransactionService bankTransactionService;
