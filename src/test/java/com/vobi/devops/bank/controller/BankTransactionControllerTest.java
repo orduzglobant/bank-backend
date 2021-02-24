@@ -34,6 +34,8 @@ import com.vobi.devops.bank.domain.TransactionType;
 import com.vobi.devops.bank.domain.Users;
 import com.vobi.devops.bank.dto.DepositDTO;
 import com.vobi.devops.bank.dto.TransactionResultDTO;
+import com.vobi.devops.bank.dto.TransferDTO;
+import com.vobi.devops.bank.dto.WithdrawDTO;
 import com.vobi.devops.bank.entityservice.AccountServiceImpl;
 import com.vobi.devops.bank.entityservice.TransactionServiceImpl;
 import com.vobi.devops.bank.entityservice.TransactionTypeServiceImpl;
@@ -41,7 +43,6 @@ import com.vobi.devops.bank.entityservice.UsersServiceImpl;
 import com.vobi.devops.bank.service.BankTransactionServiceImpl;
 
 @WebMvcTest(value = BankTransactionController.class)
-//@ExtendWith(SpringExtension.class)
 class BankTransactionControllerTest {
 	
 	@Autowired
@@ -60,14 +61,9 @@ class BankTransactionControllerTest {
 		String accountId="4640-0341-9387-5781";
 		String userEmail="vondrusek1@wisc.edu";
 		Double amount=15000.0;
-		Double amountExpected=85000.0;
-		
-		TransactionResultDTO transactionResultDTO=new TransactionResultDTO(34, amountExpected);
 		
 		DepositDTO depositDTO=new DepositDTO(accountId,amount,userEmail);
 		String jsonDepositDTO=objectMapper.writeValueAsString(depositDTO);
-		
-		when(bankTransactionService.deposit(depositDTO)).thenReturn(transactionResultDTO);
 
 		mockMvc.perform(post("/api/v1/transactions/deposit")
 				.contentType("application/json")
@@ -78,21 +74,48 @@ class BankTransactionControllerTest {
 	}
 	
 	@Test
-	void debeRetornar400PorqueAccoIdEsNullEnDeposit() throws Exception{
+	void debeRetornar200EnWithdraw() throws Exception{
 		//Arrange
 		String accountId="4640-0341-9387-5781";
 		String userEmail="vondrusek1@wisc.edu";
 		Double amount=15000.0;
-		Double amountExpected=85000.0;
 		
+		WithdrawDTO withdrawDTO=new WithdrawDTO(accountId,amount,userEmail);
+		String jsonWithdrawDTO=objectMapper.writeValueAsString(withdrawDTO);
+
+		mockMvc.perform(post("/api/v1/transactions/withdraw")
+				.contentType("application/json")
+				.content(jsonWithdrawDTO))
+				.andExpect(status().isOk())
+				.andReturn();
+	
+	}
+	
+	@Test
+	void debeRetornar200EnTransfer() throws Exception{
+		String accoIdOrigin="4640-0341-9387-5781";
+		String accoIdDestination="6592-7866-3024-5314";		
+		Double amount=15000.0;
+		String userEmail="vondrusek1@wisc.edu";
 		
-		DepositDTO depositDTO=new DepositDTO(null,amount,userEmail);
-		TransactionResultDTO transactionResultDTO=new TransactionResultDTO(34, amountExpected);
+		TransferDTO transferDTO=new TransferDTO(accoIdOrigin, accoIdDestination, amount, userEmail);
 		
+		String jsonTransferDTO=objectMapper.writeValueAsString(transferDTO);
+
+		mockMvc.perform(post("/api/v1/transactions/transfer")
+				.contentType("application/json")
+				.content(jsonTransferDTO))
+				.andExpect(status().isOk())
+				.andReturn();
+	
+	}
+	
+	@Test
+	void debeRetornar400EnDeposit() throws Exception{
+		//Arrange		
+		DepositDTO depositDTO=new DepositDTO(null,null,null);
 		String jsonDepositDTO=objectMapper.writeValueAsString(depositDTO);
 		
-		when(bankTransactionService.deposit(depositDTO)).thenReturn(transactionResultDTO);
-
 		mockMvc.perform(post("/api/v1/transactions/deposit")
 				.contentType("application/json")
 				.content(jsonDepositDTO))

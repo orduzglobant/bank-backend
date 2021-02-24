@@ -2,7 +2,9 @@ package com.vobi.devops.bank.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.processing.Generated;
+
 import org.springframework.stereotype.Component;
 
 import com.vobi.devops.bank.domain.Customer;
