@@ -23,7 +23,28 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<org.apache.commons.collections4>4.4</org.apache.commons.collections4>
 		<java.version>11</java.version>
+		 <!-- Propiedad usada para localizar el fichero con la configuracion especifica segun perfil. -->
+        <build.profile.id>dev</build.profile.id>
+         <!-- Por defecto, solo teste unitarios seran ejecutados. -->
+        <skip.integration.tests>true</skip.integration.tests>
+        <skip.unit.tests>false</skip.unit.tests>
 	</properties>
+	
+	<profiles>
+        <profile>
+            <id>dev</id>
+        </profile>
+        <profile>
+            <id>integration-test</id>
+            <properties>
+                <!-- Usado para localizar configuracion especifica . -->
+                <build.profile.id>integration-test</build.profile.id>
+                <!-- Solo los test de integracion seran ejecutados. -->
+                <skip.integration.tests>false</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+            </properties>
+        </profile>
+    </profiles>
 
 	<dependencies>
 
@@ -96,20 +117,31 @@
 		<plugins>
 			<plugin>
 			    <artifactId>maven-surefire-plugin</artifactId>
+			    <configuration>
+                    <!-- Se salta test unitarios si el valor de skip.unit.tests property es true -->
+                    <skipTests>${skip.unit.tests}</skipTests>
+                    <!-- Excluye los test de integracion cuando se ejecutan test unitarios. ß-->
+                    <excludes>
+                        <exclude>**/IT*.java</exclude>
+                    </excludes>
+                </configuration>
 			</plugin>
 			
 			<plugin>
 			    <artifactId>maven-failsafe-plugin</artifactId>
-			    
+			    <configuration>
+                   <!-- Se salta los test de integracion si el valor de skip.integration.tests es true -->
+                   <skipTests>${skip.integration.tests}</skipTests>
+                </configuration>
 			    <executions>
 			        <execution>
 			            <goals>
 			                <goal>integration-test</goal>
 			                <goal>verify</goal>
-			            </goals>
-			            
-			        </execution>
+			            </goals>			            
+			        </execution>			          
 			    </executions>
+			    
 			</plugin>
 
 			<plugin>
