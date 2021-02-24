@@ -21,12 +21,12 @@ import com.vobi.devops.bank.service.BankTransactionService;
 public class BankTransactionController {
 
 	@Autowired
-	BankTransactionService bankTransaction;
+	BankTransactionService bankTransactionService;
 
 	@PostMapping("/transfer")
 	public ResponseEntity<TransactionResultDTO> transfer(@Valid @RequestBody TransferDTO transferDTO) throws Exception {
 
-		TransactionResultDTO transactionResultDTO = bankTransaction.transfer(transferDTO);
+		TransactionResultDTO transactionResultDTO = bankTransactionService.transfer(transferDTO);
 		return ResponseEntity.ok().body(transactionResultDTO);
 
 	}
@@ -34,7 +34,7 @@ public class BankTransactionController {
 	@PostMapping("/withdraw")
 	public ResponseEntity<TransactionResultDTO> withdraw(@Valid @RequestBody WithdrawDTO withdrawDTO) throws Exception {
 
-		TransactionResultDTO transactionResultDTO = bankTransaction.withdraw(withdrawDTO);
+		TransactionResultDTO transactionResultDTO = bankTransactionService.withdraw(withdrawDTO);
 		return ResponseEntity.ok().body(transactionResultDTO);
 
 	}
@@ -42,7 +42,7 @@ public class BankTransactionController {
 	@PostMapping("/deposit")
 	public ResponseEntity<TransactionResultDTO> deposit(@Valid @RequestBody DepositDTO depositDTO) throws Exception {
 
-		TransactionResultDTO transactionResultDTO = bankTransaction.deposit(depositDTO);
+		TransactionResultDTO transactionResultDTO = bankTransactionService.deposit(depositDTO);
 		return ResponseEntity.ok().body(transactionResultDTO);
 
 	}

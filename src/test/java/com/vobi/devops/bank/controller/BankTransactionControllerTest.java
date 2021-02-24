@@ -40,6 +40,7 @@ import com.vobi.devops.bank.entityservice.AccountServiceImpl;
 import com.vobi.devops.bank.entityservice.TransactionServiceImpl;
 import com.vobi.devops.bank.entityservice.TransactionTypeServiceImpl;
 import com.vobi.devops.bank.entityservice.UsersServiceImpl;
+import com.vobi.devops.bank.service.BankTransactionService;
 import com.vobi.devops.bank.service.BankTransactionServiceImpl;
 
 @WebMvcTest(value = BankTransactionController.class)
@@ -52,7 +53,7 @@ class BankTransactionControllerTest {
 	private ObjectMapper objectMapper;
 	
 	@MockBean
-	BankTransactionServiceImpl bankTransactionService;
+	BankTransactionService bankTransactionService;
 	
 
 	@Test
@@ -64,6 +65,10 @@ class BankTransactionControllerTest {
 		
 		DepositDTO depositDTO=new DepositDTO(accountId,amount,userEmail);
 		String jsonDepositDTO=objectMapper.writeValueAsString(depositDTO);
+		
+		TransactionResultDTO transactionResultDTO=new TransactionResultDTO(32, 85000.0);
+		
+		when(bankTransactionService.deposit(depositDTO)).thenReturn(transactionResultDTO);
 
 		mockMvc.perform(post("/api/v1/transactions/deposit")
 				.contentType("application/json")
