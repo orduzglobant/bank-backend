@@ -18,14 +18,6 @@ variables:
   MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
   MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
 
-schedules:
-- cron: '0 3 * * *'
-  displayName: Deploy every day at 3 A.M.
-  branches:
-    include:
-    - master
-  always: false 
-
 stages:
 
 - stage: Clean_Build_Test_Y_Package

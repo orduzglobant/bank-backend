@@ -1,5 +1,6 @@
 package com.vobi.devops.bank.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ class BankTransactionControllerMockTest {
 		String accountId="4640-0341-9387-5781";
 		String userEmail="vondrusek1@wisc.edu";
 		Double amount=15000.0;
+		String expectedStatus="200 OK";
 		ResponseEntity<TransactionResultDTO> transactionResultDTOExpected=null;
 		DepositDTO depositDTO=new DepositDTO(accountId,amount,userEmail);
 		
@@ -43,7 +45,8 @@ class BankTransactionControllerMockTest {
 		
 		
 		String statusCode=transactionResultDTOExpected.getStatusCode().toString();
-		System.out.println(statusCode);
+		
+		assertEquals(expectedStatus, statusCode);
 	}
 	
 	
