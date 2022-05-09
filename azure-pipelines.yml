@@ -48,6 +48,7 @@ stages:
       #        jdkArchitectureOption: 'x64'
       #        publishJUnitResults: false
       #        goals: 'compile -DskipTests=true'
+      #Pruebas oRDUZ
 
       - job: Test_Sources
         displayName: Test Sources
